@@ -1,5 +1,11 @@
+import Navigation from "./components/Navigation";
+
 const AdminPage = () => {
-  return <div>This is an Admin Page!</div>;
+  return (
+    <div>
+      <Navigation />
+    </div>
+  );
 };
 
 export default AdminPage;
