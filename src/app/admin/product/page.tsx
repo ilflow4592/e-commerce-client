@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { Product } from "../entity/product/Product";
 import { PaginatedResponse } from "../entity/PaginatedResponse";
 import { DataGrid } from "@mui/x-data-grid";
@@ -38,9 +38,19 @@ const ProductPage = () => {
 
   return (
     <Paper sx={{ width: "100%" }}>
-      <Typography variant="h5" sx={{ fontWeight: "bold", padding: "16px" }}>
-        Product List
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "20px",
+        }}
+      >
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+          Product List
+        </Typography>
+        <Button variant="contained">상품 생성</Button>
+      </Box>
       <DataGrid
         rows={products.data}
         columns={getAllProductResponseColumns.map((col) => ({
@@ -53,10 +63,8 @@ const ProductPage = () => {
         pageSizeOptions={[5, 10]}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        checkboxSelection
         sx={{
-          height: "84vh", // 높이 고정
-          // overflow: "auto", // 스크롤 활성화
+          height: "84vh",
         }}
       />
     </Paper>

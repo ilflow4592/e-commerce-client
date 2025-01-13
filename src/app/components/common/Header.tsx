@@ -11,7 +11,7 @@ const Wrapper = styled("div")({
   alignItems: "center",
   gap: "12px",
   height: "8vh",
-  paddingRight: "12px",
+  paddingRight: "20px",
 });
 
 const ShopLinkButton = styled(Button)({
