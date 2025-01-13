@@ -1,11 +1,7 @@
-import Navigation from "./components/Navigation";
+import DashboardLayoutBasic from "./components/DashboardLayoutBasic";
 
 const AdminPage = () => {
-  return (
-    <div>
-      <Navigation />
-    </div>
-  );
+  return <DashboardLayoutBasic />;
 };
 
 export default AdminPage;
