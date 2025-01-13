@@ -6,10 +6,12 @@ import { Button } from "@mui/material";
 
 const Wrapper = styled("div")({
   backgroundColor: "aliceblue",
-  padding: 8,
   display: "flex",
-  justifyContent: "center",
+  justifyContent: "flex-end",
+  alignItems: "center",
   gap: "12px",
+  height: "8vh",
+  paddingRight: "12px",
 });
 
 const ShopLinkButton = styled(Button)({
@@ -31,11 +33,11 @@ const AdminLinkButton = styled(Button)({
 const Header = () => {
   return (
     <Wrapper>
-      <Link href={"/shop"} passHref>
+      <Link href={"/shop"}>
         <ShopLinkButton variant="contained">Shop</ShopLinkButton>
       </Link>
 
-      <Link href={"/admin"} passHref>
+      <Link href={"/admin"}>
         <AdminLinkButton variant="contained">Admin</AdminLinkButton>
       </Link>
     </Wrapper>

@@ -2,84 +2,64 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Table,
-  TableContainer,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Paper,
-} from "@mui/material";
-
-export interface PaginatedResponse {
-  data: Product[];
-  last: boolean;
-  page: number;
-  size: number;
-}
-
-export interface Product {
-  id: number;
-  name: string;
-  description: string;
-  unitPrice: number;
-  stockQuantity: number;
-  category: string;
-  size: string;
-}
+import { Paper, Typography } from "@mui/material";
+import { Product } from "../entity/product/Product";
+import { PaginatedResponse } from "../entity/PaginatedResponse";
+import { DataGrid } from "@mui/x-data-grid";
+import { getAllProductResponseColumns } from "../api/response/product/ProductColumns";
 
 const ProductPage = () => {
-  const [products, setProducts] = useState<PaginatedResponse>();
+  const [products, setProducts] = useState<PaginatedResponse<Product>>();
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
+
+  async function fetchData(page?: number, pageSize?: number) {
+    const response = await axios.get(
+      `http://localhost:8080/api/v1/products?page=${page}&pageSizew${pageSize}`,
+      {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    setProducts(response.data);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await axios.get(
-        "http://localhost:8080/api/v1/products",
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      setProducts(response.data);
-    }
     fetchData();
   }, []);
 
   useEffect(() => {
-    console.log(products);
-  }, [products]);
+    console.log(paginationModel);
+    fetchData(paginationModel.page, paginationModel.pageSize);
+  }, [paginationModel]);
 
   if (!products) return <div>Loading...</div>;
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>id</TableCell>
-            <TableCell>name</TableCell>
-            <TableCell>description</TableCell>
-            <TableCell>unit_price(원)</TableCell>
-            <TableCell>stock_quantity</TableCell>
-            <TableCell>category</TableCell>
-            <TableCell>size</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {products?.data?.map((product: Product) => (
-            <TableRow key={product.id}>
-              <TableCell>{product.id}</TableCell>
-              <TableCell>{product.name}</TableCell>
-              <TableCell>{product.description}</TableCell>
-              <TableCell>{product.unitPrice}</TableCell>
-              <TableCell>{product.stockQuantity}</TableCell>
-              <TableCell>{product.category}</TableCell>
-              <TableCell>{product.size}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Paper sx={{ width: "100%" }}>
+      <Typography variant="h5" sx={{ fontWeight: "bold", padding: "16px" }}>
+        Product List
+      </Typography>
+      <DataGrid
+        rows={products.data}
+        columns={getAllProductResponseColumns.map((col) => ({
+          ...col,
+          flex: 1,
+          headerAlign: "center",
+          align: "center",
+        }))}
+        initialState={{ pagination: { paginationModel } }}
+        pageSizeOptions={[5, 10]}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        checkboxSelection
+        sx={{
+          height: "84vh", // 높이 고정
+          // overflow: "auto", // 스크롤 활성화
+        }}
+      />
+    </Paper>
   );
 };
 
