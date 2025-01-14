@@ -37,7 +37,7 @@ const DataList = <T,>({
       pageSizeOptions={pageSizeOptions}
       paginationModel={paginationModel}
       onPaginationModelChange={onPaginationModelChange}
-      sx={{ height: "84vh", ...sx }}
+      sx={{ ...sx }}
     />
   );
 };
