@@ -7,13 +7,11 @@ export const getAllProductResponseColumns: GridColDef[] = [
   {
     field: "unitPrice",
     headerName: "Unit Price (₩)",
-
     type: "number",
   },
   {
     field: "stockQuantity",
     headerName: "Stock Quantity",
-
     type: "number",
   },
   { field: "category", headerName: "Category" },

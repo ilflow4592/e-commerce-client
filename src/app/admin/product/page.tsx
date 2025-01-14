@@ -5,8 +5,8 @@ import axios from "axios";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { Product } from "../entity/product/Product";
 import { PaginatedResponse } from "../entity/PaginatedResponse";
-import { DataGrid } from "@mui/x-data-grid";
 import { getAllProductResponseColumns } from "../api/response/product/ProductColumns";
+import DataList from "../components/DataList";
 
 const ProductPage = () => {
   const [products, setProducts] = useState<PaginatedResponse<Product>>();
@@ -30,14 +30,13 @@ const ProductPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(paginationModel);
     fetchData(paginationModel.page, paginationModel.pageSize);
   }, [paginationModel]);
 
   if (!products) return <div>Loading...</div>;
 
   return (
-    <Paper sx={{ width: "100%" }}>
+    <Paper>
       <Box
         sx={{
           display: "flex",
@@ -51,21 +50,13 @@ const ProductPage = () => {
         </Typography>
         <Button variant="contained">상품 생성</Button>
       </Box>
-      <DataGrid
+
+      <DataList
         rows={products.data}
-        columns={getAllProductResponseColumns.map((col) => ({
-          ...col,
-          flex: 1,
-          headerAlign: "center",
-          align: "center",
-        }))}
+        columns={getAllProductResponseColumns}
         initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        sx={{
-          height: "84vh",
-        }}
       />
     </Paper>
   );
