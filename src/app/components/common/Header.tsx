@@ -1,18 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { styled } from "@mui/material/styles";
-import { Button } from "@mui/material";
-
-const Wrapper = styled("div")({
-  backgroundColor: "aliceblue",
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
-  gap: "12px",
-  height: "8vh",
-  paddingRight: "20px",
-});
+import { Box, Button, Container } from "@mui/material";
 
 const ShopLinkButton = styled(Button)({
   backgroundColor: "green",
@@ -31,16 +22,33 @@ const AdminLinkButton = styled(Button)({
 });
 
 const Header = () => {
-  return (
-    <Wrapper>
-      <Link href={"/shop"}>
-        <ShopLinkButton variant="contained">Shop</ShopLinkButton>
-      </Link>
+  const pathname = usePathname();
+  const isShopPage = pathname.includes("/shop");
+  const isAdminPage = pathname.includes("/admin");
 
-      <Link href={"/admin"}>
-        <AdminLinkButton variant="contained">Admin</AdminLinkButton>
-      </Link>
-    </Wrapper>
+  return (
+    <Container maxWidth="xl">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          padding: "10px 0",
+        }}
+      >
+        {isShopPage && (
+          <Link href="/admin">
+            <AdminLinkButton variant="contained">To Admin</AdminLinkButton>
+          </Link>
+        )}
+
+        {isAdminPage && (
+          <Link href="/shop">
+            <ShopLinkButton variant="contained">To Shop</ShopLinkButton>
+          </Link>
+        )}
+      </Box>
+    </Container>
   );
 };
 
