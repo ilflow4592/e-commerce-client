@@ -1,6 +1,8 @@
 "use client";
-import { GridColDef, DataGrid } from "@mui/x-data-grid";
+
 import React from "react";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
 
 interface DataListProps<T> {
   rows: T[];
@@ -12,6 +14,8 @@ interface DataListProps<T> {
     page: number;
   };
   onPaginationModelChange: (model: { pageSize: number; page: number }) => void;
+  rowCount: number;
+  paginationMode?: "client" | "server";
   sx?: object;
 }
 
@@ -19,26 +23,33 @@ const DataList = <T,>({
   rows,
   columns,
   initialState,
-  pageSizeOptions = [5, 10],
+  pageSizeOptions = [5, 10, 50, 100],
   paginationModel,
   onPaginationModelChange,
+  rowCount,
+  paginationMode = "server",
   sx = {},
 }: DataListProps<T>) => {
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns.map((col) => ({
-        ...col,
-        flex: 1,
-        headerAlign: "center",
-        align: "center",
-      }))}
-      initialState={initialState}
-      pageSizeOptions={pageSizeOptions}
-      paginationModel={paginationModel}
-      onPaginationModelChange={onPaginationModelChange}
-      sx={{ ...sx }}
-    />
+    <Box sx={{ height: 578, width: "100%" }}>
+      <DataGrid
+        rows={rows}
+        columns={columns.map((col) => ({
+          ...col,
+          flex: 1,
+          headerAlign: "center",
+          align: "center",
+        }))}
+        pagination
+        paginationMode={paginationMode}
+        rowCount={rowCount}
+        pageSizeOptions={pageSizeOptions}
+        paginationModel={paginationModel}
+        onPaginationModelChange={onPaginationModelChange}
+        initialState={initialState}
+        sx={{ ...sx }}
+      />
+    </Box>
   );
 };
 

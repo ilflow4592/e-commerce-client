@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Box, Button, Container, Link, Typography } from "@mui/material";
 import { Product } from "../entity/product/Product";
 import { PaginatedResponse } from "../entity/PaginatedResponse";
@@ -10,25 +10,46 @@ import DataList from "../components/DataList";
 import Wrapper from "../components/style/Wrapper";
 
 const ProductPage = () => {
-  const [products, setProducts] = useState<PaginatedResponse<Product>>();
+  // rowCount: DataGrid가 사용하는 "추정" 전체 데이터 개수
+  const [rowCount, setRowCount] = useState<number>(0);
+
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
   });
+  const [products, setProducts] = useState<PaginatedResponse<Product> | null>(
+    null
+  );
 
-  async function fetchData(page?: number, pageSize?: number) {
-    const response = await axios.get(
-      `http://localhost:8080/api/v1/products?page=${page}&pageSizew${pageSize}`,
-      {
-        headers: { "Content-Type": "application/json" },
+  const fetchData = async (page: number, pageSize: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/products?page=${page + 1}&size=${pageSize}`,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = response.data as PaginatedResponse<Product>;
+      setProducts(data);
+
+      // 서버에서 last = true면 "이 페이지가 마지막"
+      // last = false면 "아직 다음 페이지가 있음"
+      if (data.last === false) {
+        // 마지막이 아님 -> rowCount를 "다음 페이지가 있다고 가정"한 값으로 설정
+        // (page+2) * pageSize = 최소한 다음 페이지는 있다
+        setRowCount((page + 2) * pageSize);
+      } else {
+        // 마지막임 -> 정확한 rowCount를 계산
+        // 현재까지 가져온 아이템 개수 = page*pageSize + data.data.length
+        setRowCount(page * pageSize + data.data.length);
       }
-    );
-    setProducts(response.data);
-  }
+    } catch (error) {
+      const err = error as AxiosError;
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+      console.error("Axios Error:", err.message);
+    }
+  };
 
   useEffect(() => {
     fetchData(paginationModel.page, paginationModel.pageSize);
@@ -50,7 +71,7 @@ const ProductPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Product List
           </Typography>
-          <Link href={"/admin/product/create"}>
+          <Link href="/admin/product/create">
             <Button variant="contained">상품 생성</Button>
           </Link>
         </Box>
@@ -58,9 +79,13 @@ const ProductPage = () => {
         <DataList
           rows={products.data}
           columns={getAllProductResponseColumns}
-          initialState={{ pagination: { paginationModel } }}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
+          paginationMode="server"
+          rowCount={rowCount}
+          initialState={{
+            pagination: { paginationModel },
+          }}
         />
       </Container>
     </Wrapper>
