@@ -2,10 +2,13 @@
 
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import { Alert, AlertColor, Snackbar } from "@mui/material";
+import { HttpStatusCode } from "axios";
 
 type SnackbarMessage = {
   message: string;
   severity?: AlertColor; // 'success' | 'error' | 'warning' | 'info'
+  status?: HttpStatusCode;
+  errors?: { field: string; message: string }[];
 };
 
 interface GlobalSnackbarContextProps {
@@ -53,7 +56,15 @@ export default function GlobalSnackbarProvider({
             severity={snackbarData.severity || "info"}
             sx={{ width: "100%" }}
           >
-            {snackbarData.message}
+            <p>{snackbarData.message}</p>
+            <p>status : {snackbarData.status}</p>
+            {snackbarData.errors?.map((error, index) => (
+              <div key={index}>
+                <p>
+                  error{index + 1} - {error.field} : {error.message}
+                </p>
+              </div>
+            ))}
           </Alert>
         </Snackbar>
       )}
