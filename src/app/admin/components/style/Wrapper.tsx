@@ -8,5 +8,4 @@ export default Wrapper;
 
 const Container = styled("div")({
   marginTop: "120px",
-  height: "1000vh",
 });
