@@ -17,6 +17,7 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import GlobalSnackbarProvider from "./components/GlobalSnackbarProvider";
 
 const drawerWidth = 240;
 
@@ -126,7 +127,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           backgroundColor: "#f5f5f5",
         }}
       >
-        {children}
+        <GlobalSnackbarProvider>{children}</GlobalSnackbarProvider>
       </Box>
     </Box>
   );
