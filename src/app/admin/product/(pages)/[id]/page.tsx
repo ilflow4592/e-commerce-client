@@ -1,12 +1,16 @@
 import { Box, Container, Typography } from "@mui/material";
 import Wrapper from "app/admin/components/style/Wrapper";
+import UpdateProduct from "./UpdateProduct";
 
 const UpdateProductPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) => {
-  const id = (await params).id;
+  const id = Number((await params).id);
+
+  const data = await fetch(`http://localhost:8080/api/v1/products/${id}`);
+  const product = await data.json();
 
   return (
     <Wrapper>
@@ -22,7 +26,8 @@ const UpdateProductPage = async ({
           >
             Update Product
           </Typography>
-          Current Id : {id}
+
+          <UpdateProduct id={id} product={product} />
         </Box>
       </Container>
     </Wrapper>
