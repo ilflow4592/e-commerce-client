@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridCallbackDetails,
+  GridColDef,
+  GridSortItem,
+  GridSortModel,
+} from "@mui/x-data-grid";
 import { Box } from "@mui/material";
 
 interface DataListProps<T> {
@@ -17,6 +23,11 @@ interface DataListProps<T> {
   rowCount: number;
   paginationMode?: "client" | "server";
   sx?: object;
+  sortModel?: GridSortItem[];
+  handleSortModelChange?: (
+    model: GridSortModel,
+    details: GridCallbackDetails
+  ) => void;
 }
 
 const DataList = <T,>({
@@ -29,6 +40,8 @@ const DataList = <T,>({
   rowCount,
   paginationMode = "server",
   sx = {},
+  sortModel,
+  handleSortModelChange,
 }: DataListProps<T>) => {
   return (
     <Box sx={{ height: 578, width: "100%" }}>
@@ -47,6 +60,9 @@ const DataList = <T,>({
         paginationModel={paginationModel}
         onPaginationModelChange={onPaginationModelChange}
         initialState={initialState}
+        sortingMode="server"
+        sortModel={sortModel}
+        onSortModelChange={handleSortModelChange}
         sx={{ ...sx }}
       />
     </Box>

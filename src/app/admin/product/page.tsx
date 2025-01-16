@@ -8,23 +8,27 @@ import { PaginatedResponse } from "../entity/PaginatedResponse";
 import { getAllProductResponseColumns } from "../api/response/product/ProductColumns";
 import DataList from "../components/DataList";
 import Wrapper from "../components/style/Wrapper";
+import { GridCallbackDetails, GridSortItem } from "@mui/x-data-grid";
 
 const ProductPage = () => {
-  // rowCount: DataGrid가 사용하는 "추정" 전체 데이터 개수
   const [rowCount, setRowCount] = useState<number>(0);
-
+  const [sortModel, setSortModel] = useState<GridSortItem[]>([]);
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 10,
     page: 0,
   });
+
   const [products, setProducts] = useState<PaginatedResponse<Product> | null>(
     null
   );
 
   const fetchData = async (page: number, pageSize: number) => {
     try {
+      const field = sortModel[0]?.field ?? "id";
+      const sort = sortModel[0]?.sort ?? "asc";
+
       const response = await axios.get(
-        `http://localhost:8080/api/v1/products?page=${page + 1}&size=${pageSize}`,
+        `http://localhost:8080/api/v1/products?page=${page + 1}&size=${pageSize}&sort=${field},${sort}`,
         {
           headers: { "Content-Type": "application/json" },
         }
@@ -51,9 +55,26 @@ const ProductPage = () => {
     }
   };
 
+  const handleSortModelChange = (
+    model: GridSortItem[],
+    details: GridCallbackDetails
+  ) => {
+    console.log("Sort details:", details);
+
+    if (paginationModel.page !== 0) {
+      setPaginationModel((prev) => ({
+        ...prev,
+        page: 0,
+      }));
+    }
+
+    setSortModel(model);
+    fetchData(paginationModel.page, paginationModel.pageSize);
+  };
+
   useEffect(() => {
     fetchData(paginationModel.page, paginationModel.pageSize);
-  }, [paginationModel]);
+  }, [paginationModel, sortModel]);
 
   if (!products) return <div>Loading...</div>;
 
@@ -83,6 +104,8 @@ const ProductPage = () => {
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
           rowCount={rowCount}
+          sortModel={sortModel}
+          handleSortModelChange={handleSortModelChange}
           initialState={{
             pagination: { paginationModel },
           }}
