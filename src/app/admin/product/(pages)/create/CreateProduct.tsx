@@ -18,10 +18,10 @@ const CreateProduct = () => {
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
-  const [name, setName] = useState("새로운 청바지");
-  const [description, setDescription] = useState("레알");
-  const [unitPrice, setUnitPrice] = useState<string>("30000");
-  const [stockQuantity, setStockQuantity] = useState<string>("10");
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [unitPrice, setUnitPrice] = useState<number | string>("");
+  const [stockQuantity, setStockQuantity] = useState<number | string>("");
   const [category, setCategory] = useState("");
   const [size, setSize] = useState("");
 
@@ -98,14 +98,18 @@ const CreateProduct = () => {
         value={unitPrice}
         type="number"
         required
-        onChange={(e) => setUnitPrice(e.target.value)}
+        onChange={(e) =>
+          setUnitPrice(e.target.value === "" ? "" : Number(e.target.value))
+        }
       />
 
       <TextField
         label="재고 수량"
         value={stockQuantity}
         type="number"
-        onChange={(e) => setStockQuantity(e.target.value)}
+        onChange={(e) =>
+          setStockQuantity(e.target.value === "" ? "" : Number(e.target.value))
+        }
         required
       />
 
