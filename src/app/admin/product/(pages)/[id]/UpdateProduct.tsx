@@ -14,6 +14,7 @@ import axios from "axios";
 import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useConfirm } from "material-ui-confirm";
 
 interface UpdateProducProps {
   id: number;
@@ -21,6 +22,7 @@ interface UpdateProducProps {
 }
 
 const UpdateProduct = ({ id, product }: UpdateProducProps) => {
+  const confirm = useConfirm();
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
@@ -34,6 +36,39 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
   );
   const [category, setCategory] = useState(product.category);
   const [size, setSize] = useState(product.size);
+
+  const handleConfirm = () => {
+    confirm({ title: "정말로 삭제하시겠습니까?" })
+      .then(async () => {
+        await axios.delete(`http://localhost:8080/api/v1/products/${id}`, {
+          headers: { "Content-Type": "application/json" },
+        });
+
+        // 토스트 알람 보여주기
+        showMessage({
+          message: "상품이 성공적으로 삭제되었습니다!",
+          severity: "success",
+        });
+
+        router.push("/admin/product");
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          const status = error?.response?.status;
+          const errors = error?.response?.data;
+          console.log("error.response.", error.response);
+
+          showMessage({
+            message: "상품 삭제에 실패했습니다.",
+            severity: "error",
+            status,
+            errors,
+          });
+        } else {
+          console.log(error);
+        }
+      });
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -68,7 +103,7 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
         const status = error?.response?.status;
         const errors = error?.response?.data;
         console.log("error.response.", error.response);
-        // 실패 시 에러용 스낵바도 가능
+
         showMessage({
           message: "상품 갱신에 실패했습니다.",
           severity: "error",
@@ -162,6 +197,10 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
 
       <Button type="submit" variant="contained">
         Submit
+      </Button>
+
+      <Button variant="contained" color="error" onClick={handleConfirm}>
+        Delete
       </Button>
     </Box>
   );

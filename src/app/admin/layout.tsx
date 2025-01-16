@@ -18,6 +18,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import GlobalSnackbarProvider from "./components/GlobalSnackbarProvider";
+import { ConfirmProvider } from "material-ui-confirm";
 
 const drawerWidth = 240;
 
@@ -127,7 +128,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           backgroundColor: "#f5f5f5",
         }}
       >
-        <GlobalSnackbarProvider>{children}</GlobalSnackbarProvider>
+        <ConfirmProvider>
+          <GlobalSnackbarProvider>{children}</GlobalSnackbarProvider>
+        </ConfirmProvider>
       </Box>
     </Box>
   );
