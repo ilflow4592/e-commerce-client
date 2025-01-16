@@ -57,7 +57,7 @@ export default function GlobalSnackbarProvider({
             sx={{ width: "100%" }}
           >
             <p>{snackbarData.message}</p>
-            <p>status : {snackbarData.status}</p>
+            {snackbarData.status && <p> status : {snackbarData.status}</p>}
             {snackbarData.errors?.map((error, index) => (
               <div key={index}>
                 <p>
