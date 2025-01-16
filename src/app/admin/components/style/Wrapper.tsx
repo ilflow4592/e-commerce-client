@@ -1,3 +1,5 @@
+"use client";
+
 import { styled } from "@mui/material";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
