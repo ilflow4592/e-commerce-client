@@ -17,7 +17,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-const CreateProduct = () => {
+const ProductCreatePage = () => {
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
@@ -168,4 +168,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default ProductCreatePage;
