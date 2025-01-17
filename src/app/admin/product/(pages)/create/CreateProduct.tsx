@@ -8,9 +8,11 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import axios from "axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -18,17 +20,18 @@ const CreateProduct = () => {
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [unitPrice, setUnitPrice] = useState<number | string>("");
-  const [stockQuantity, setStockQuantity] = useState<number | string>("");
-  const [category, setCategory] = useState("");
-  const [size, setSize] = useState("");
+  const [name, setName] = useState<string>("로고");
+  const [description, setDescription] = useState<string>("로고");
+  const [unitPrice, setUnitPrice] = useState<string>("10000");
+  const [stockQuantity, setStockQuantity] = useState<string>("10");
+  const [category, setCategory] = useState("바지");
+  const [size, setSize] = useState("M");
+  const [image, setImage] = useState<File | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = {
+    const createProductDto = {
       name,
       description,
       unitPrice,
@@ -37,9 +40,25 @@ const CreateProduct = () => {
       size,
     };
 
+    if (!image) {
+      alert("파일이 없습니다.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+      "createProductDto",
+      new Blob([JSON.stringify(createProductDto)], { type: "application/json" })
+    );
+
+    formData.append("file", image);
+
     try {
-      await axios.post(`http://localhost:8080/api/v1/products`, formData, {
-        headers: { "Content-Type": "application/json" },
+      await axios.post("http://localhost:8080/api/v1/products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       // 토스트 알람 보여주기
@@ -64,6 +83,30 @@ const CreateProduct = () => {
       } else {
         console.log(error);
       }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      console.log(e.target.files[0]);
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (value.length === 1 && value === "0") {
+      return;
+    }
+
+    // 숫자만 허용 (특수문자 및 하이픈 "-" 차단)
+    const numericValue = value.replace(/[^0-9]/g, "");
+
+    if (name === "unitPrice") {
+      setUnitPrice(numericValue);
+    } else if (name === "stockQuantity") {
+      setStockQuantity(numericValue);
     }
   };
 
@@ -93,24 +136,67 @@ const CreateProduct = () => {
         required
       />
 
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {image && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "200px",
+              height: "200px",
+              border: "1px dashed gray",
+              borderRadius: "10px",
+              marginRight: "30px",
+            }}
+          >
+            <Image
+              src={URL.createObjectURL(image)}
+              width={150}
+              height={150}
+              alt={image.name}
+            />
+          </Box>
+        )}
+
+        <Button variant="contained" component="label">
+          사진 업로드
+          <input
+            type="file"
+            hidden
+            onChange={handleFileChange}
+            accept="image/png"
+          />
+        </Button>
+      </Box>
+
+      {image && (
+        <Typography variant="body1">image name : {image.name}</Typography>
+      )}
+
       <TextField
         label="개당 가격"
+        name="unitPrice"
         value={unitPrice}
-        type="number"
+        type="text"
         required
-        onChange={(e) =>
-          setUnitPrice(e.target.value === "" ? "" : Number(e.target.value))
-        }
+        slotProps={{ htmlInput: { min: 0 } }}
+        onChange={handleChange}
       />
 
       <TextField
         label="재고 수량"
+        name="stockQuantity"
         value={stockQuantity}
-        type="number"
-        onChange={(e) =>
-          setStockQuantity(e.target.value === "" ? "" : Number(e.target.value))
-        }
+        type="text"
+        slotProps={{ htmlInput: { min: 0 } }}
         required
+        onChange={handleChange}
       />
 
       <FormControl fullWidth required>
