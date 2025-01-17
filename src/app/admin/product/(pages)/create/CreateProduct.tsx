@@ -4,9 +4,11 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -27,6 +29,11 @@ const CreateProduct = () => {
   const [category, setCategory] = useState("바지");
   const [size, setSize] = useState("M");
   const [image, setImage] = useState<File | null>(null);
+  const [shopDisplayable, setShopDisplayable] = useState(false);
+
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShopDisplayable(event.target.checked);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,6 +45,7 @@ const CreateProduct = () => {
       stockQuantity,
       category,
       size,
+      shopDisplayable,
     };
 
     if (!image) {
@@ -231,6 +239,11 @@ const CreateProduct = () => {
           <MenuItem value={"XL"}>XL</MenuItem>
         </Select>
       </FormControl>
+
+      <FormControlLabel
+        control={<Switch checked={shopDisplayable} onChange={handleToggle} />}
+        label="쇼핑몰에 노출"
+      />
 
       <Button type="submit" variant="contained">
         Submit
