@@ -7,4 +7,6 @@ export interface Product {
   category: string;
   size: string;
   shopDisplayable?: boolean;
+  fileUrl: string;
+  fileName: string;
 }

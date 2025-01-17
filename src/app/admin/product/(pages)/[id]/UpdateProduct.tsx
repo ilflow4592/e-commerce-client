@@ -5,16 +5,20 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
+  Switch,
   TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConfirm } from "material-ui-confirm";
+import Image from "next/image";
 
 interface UpdateProducProps {
   id: number;
@@ -36,6 +40,14 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
   );
   const [category, setCategory] = useState(product.category);
   const [size, setSize] = useState(product.size);
+  const [image, setImage] = useState<File | null>(null);
+  const [shopDisplayable, setShopDisplayable] = useState(
+    product.shopDisplayable
+  );
+
+  const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setShopDisplayable(event.target.checked);
+  };
 
   const handleConfirm = () => {
     confirm({ title: "정말로 삭제하시겠습니까?" })
@@ -73,23 +85,36 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = {
+    const productDto = {
       name,
       description,
       unitPrice,
       stockQuantity,
       category,
       size,
+      shopDisplayable,
     };
 
+    if (!image) {
+      alert("파일이 없습니다.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+      "productDto",
+      new Blob([JSON.stringify(productDto)], { type: "application/json" })
+    );
+
+    formData.append("file", image);
+
     try {
-      await axios.patch(
-        `http://localhost:8080/api/v1/products/${id}`,
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      await axios.put(`http://localhost:8080/api/v1/products/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       // 토스트 알람 보여주기
       showMessage({
@@ -113,6 +138,34 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
       } else {
         console.log(error);
       }
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      console.log(e.target.files[0]);
+      setImage(e.target.files[0]);
+    }
+  };
+
+  useEffect(() => {
+    console.log(image);
+  }, [image]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (value.length === 1 && value === "0") {
+      return;
+    }
+
+    // 숫자만 허용 (특수문자 및 하이픈 "-" 차단)
+    const numericValue = value.replace(/[^0-9]/g, "");
+
+    if (name === "unitPrice") {
+      setUnitPrice(numericValue);
+    } else if (name === "stockQuantity") {
+      setStockQuantity(numericValue);
     }
   };
 
@@ -142,24 +195,70 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
         required
       />
 
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {product?.fileUrl && (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "200px",
+              height: "200px",
+              border: "1px dashed gray",
+              borderRadius: "10px",
+              marginRight: "30px",
+            }}
+          >
+            <Image
+              src={(image && URL.createObjectURL(image)) ?? product?.fileUrl}
+              alt="Product Image"
+              width={150}
+              height={150}
+              unoptimized
+            />
+          </Box>
+        )}
+
+        <Button variant="contained" component="label">
+          사진 업로드
+          <input
+            type="file"
+            hidden
+            onChange={handleFileChange}
+            accept="image/png"
+          />
+        </Button>
+      </Box>
+
+      {product?.fileName && (
+        <Typography variant="body1">
+          image name : {image ? image.name : product?.fileName}
+        </Typography>
+      )}
+
       <TextField
         label="개당 가격"
+        name="unitPrice"
         value={unitPrice}
-        type="number"
+        type="text"
         required
-        onChange={(e) =>
-          setUnitPrice(e.target.value === "" ? "" : Number(e.target.value))
-        }
+        slotProps={{ htmlInput: { min: 0 } }}
+        onChange={handleChange}
       />
 
       <TextField
         label="재고 수량"
+        name="stockQuantity"
         value={stockQuantity}
-        type="number"
-        onChange={(e) =>
-          setStockQuantity(e.target.value === "" ? "" : Number(e.target.value))
-        }
+        type="text"
+        slotProps={{ htmlInput: { min: 0 } }}
         required
+        onChange={handleChange}
       />
 
       <FormControl fullWidth required>
@@ -194,6 +293,11 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
           <MenuItem value={"XL"}>XL</MenuItem>
         </Select>
       </FormControl>
+
+      <FormControlLabel
+        control={<Switch checked={shopDisplayable} onChange={handleToggle} />}
+        label="쇼핑몰에 노출"
+      />
 
       <Button type="submit" variant="contained">
         Submit
