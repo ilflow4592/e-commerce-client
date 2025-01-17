@@ -6,4 +6,5 @@ export interface Product {
   stockQuantity: number;
   category: string;
   size: string;
+  shopDisplayable?: boolean;
 }
