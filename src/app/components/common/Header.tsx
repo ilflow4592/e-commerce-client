@@ -37,6 +37,7 @@ const Header = () => {
           justifyContent: "flex-end",
           alignItems: "center",
           padding: "10px 0",
+          zIndex: 1,
         }}
       >
         {isShopPage && (
