@@ -19,6 +19,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import GlobalSnackbarProvider from "./components/GlobalSnackbarProvider";
 import { ConfirmProvider } from "material-ui-confirm";
+import Header from "app/components/common/Header";
 
 const drawerWidth = 240;
 
@@ -71,6 +72,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           onClick={isMobile ? handleDrawerToggle : undefined}
         >
           <ListItemText primary="Product" />
+        </ListItem>
+        <ListItem>
+          <Header />
         </ListItem>
       </List>
     </>

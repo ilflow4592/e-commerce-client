@@ -9,5 +9,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 export default Wrapper;
 
 const Container = styled("div")({
-  marginTop: "120px",
+  width: "100%",
+  height: "100vh",
+  backgroundColor: "#fff",
 });

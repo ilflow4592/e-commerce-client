@@ -30,11 +30,8 @@ const Header = () => {
     <Container maxWidth="xl">
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          right: "10px",
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: isShopPage ? "flex-end" : "center",
           alignItems: "center",
           padding: "10px 0",
           zIndex: 1,

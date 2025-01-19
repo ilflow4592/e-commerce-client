@@ -44,7 +44,7 @@ const DataList = <T,>({
   handleSortModelChange,
 }: DataListProps<T>) => {
   return (
-    <Box sx={{ height: 578, width: "100%" }}>
+    <Box sx={{ width: "100%", height: "100vh" }}>
       <DataGrid
         rows={rows}
         columns={columns.map((col) => ({
