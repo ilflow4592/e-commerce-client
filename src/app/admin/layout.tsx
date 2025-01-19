@@ -129,7 +129,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         component="main"
         sx={{
           ml: isMobile ? 0 : `${drawerWidth}px`,
-          backgroundColor: "#f5f5f5",
+          backgroundColor: "#fff",
         }}
       >
         <ConfirmProvider>
