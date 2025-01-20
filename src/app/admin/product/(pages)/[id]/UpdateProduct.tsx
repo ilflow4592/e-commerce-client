@@ -16,7 +16,7 @@ import {
 import axios from "axios";
 import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useConfirm } from "material-ui-confirm";
 import Image from "next/image";
 
@@ -147,10 +147,6 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
       setImage(e.target.files[0]);
     }
   };
-
-  useEffect(() => {
-    console.log(image);
-  }, [image]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -22,12 +22,12 @@ const CreateProduct = () => {
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
-  const [name, setName] = useState<string>("로고");
-  const [description, setDescription] = useState<string>("로고");
-  const [unitPrice, setUnitPrice] = useState<string>("10000");
-  const [stockQuantity, setStockQuantity] = useState<string>("10");
-  const [category, setCategory] = useState("바지");
-  const [size, setSize] = useState("M");
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [unitPrice, setUnitPrice] = useState<string>("");
+  const [stockQuantity, setStockQuantity] = useState<string>("");
+  const [category, setCategory] = useState("");
+  const [size, setSize] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [shopDisplayable, setShopDisplayable] = useState(false);
 
