@@ -49,11 +49,10 @@ const ProductDetail = () => {
         <Box
           sx={{
             width: "100%",
-            height: "300px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-
+            height: "100%",
             borderRadius: "8px",
           }}
         >
@@ -61,8 +60,8 @@ const ProductDetail = () => {
             loader={imageLoader}
             src={product.fileUrl}
             alt={product.fileName}
-            width={500}
-            height={500}
+            width={300}
+            height={400}
             style={{
               objectFit: "contain",
             }}
