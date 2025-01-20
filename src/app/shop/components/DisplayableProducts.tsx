@@ -6,6 +6,7 @@ import Image from "next/image";
 import { formatNumber } from "../utils/formatNumber";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRouter } from "next/navigation";
+import { encodeToBase64Query } from "../utils/base64";
 
 interface DisplayableProductsProps {
   products: Product[];
@@ -17,6 +18,15 @@ const imageLoader = ({ src }: { src: string }) => {
 
 const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
   const router = useRouter();
+
+  const handlePush = (product: Product) => {
+    const data = { ...product };
+
+    const query = encodeToBase64Query(data);
+
+    router.push(`/shop/products/${product.id}${query}`);
+  };
+
   return (
     <Box
       sx={{
@@ -38,7 +48,7 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
           }}
         >
           <Box
-            onClick={() => router.push(`/shop/products/${product.id}`)}
+            onClick={() => handlePush(product)}
             sx={{
               ":hover": {
                 cursor: "pointer",
@@ -128,9 +138,13 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
                 marginLeft: "8px",
                 padding: "6px",
                 borderRadius: "8px",
-                borderColor: "#1976d2",
+                backgroundColor: "#ff9800", // 오렌지색으로 변경
+                border: "2px solid #ff9800", // 테두리 추가
+                color: "white",
+                fontWeight: "bold",
                 "&:hover": {
-                  borderColor: "#1976d2",
+                  backgroundColor: "#e68900", // 호버 시 더 진한 오렌지
+                  border: "2px solid #e68900",
                 },
               }}
             >
