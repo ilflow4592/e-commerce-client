@@ -92,7 +92,7 @@ const ProductPage = () => {
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Product List
           </Typography>
-          <Link href="/admin/product/create">
+          <Link href="/admin/products/create">
             <Button variant="contained">상품 생성</Button>
           </Link>
         </Box>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Product } from "app/admin/entity/product/Product";
 import {
   Box,
   Button,
@@ -13,79 +12,33 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
+import axios from "axios";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useConfirm } from "material-ui-confirm";
-import Image from "next/image";
 
-interface UpdateProducProps {
-  id: number;
-  product: Product;
-}
-
-const UpdateProduct = ({ id, product }: UpdateProducProps) => {
-  const confirm = useConfirm();
+const CreateProduct = () => {
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
-  const [name, setName] = useState(product.name);
-  const [description, setDescription] = useState(product.description);
-  const [unitPrice, setUnitPrice] = useState<number | string>(
-    product.unitPrice
-  );
-  const [stockQuantity, setStockQuantity] = useState<number | string>(
-    product.stockQuantity
-  );
-  const [category, setCategory] = useState(product.category);
-  const [size, setSize] = useState(product.size);
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [unitPrice, setUnitPrice] = useState<string>("");
+  const [stockQuantity, setStockQuantity] = useState<string>("");
+  const [category, setCategory] = useState("");
+  const [size, setSize] = useState("");
   const [image, setImage] = useState<File | null>(null);
-  const [shopDisplayable, setShopDisplayable] = useState(
-    product.shopDisplayable
-  );
+  const [shopDisplayable, setShopDisplayable] = useState(false);
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShopDisplayable(event.target.checked);
   };
 
-  const handleConfirm = () => {
-    confirm({ title: "정말로 삭제하시겠습니까?" })
-      .then(async () => {
-        await axios.delete(`http://localhost:8080/api/v1/products/${id}`, {
-          headers: { "Content-Type": "application/json" },
-        });
-
-        // 토스트 알람 보여주기
-        showMessage({
-          message: "상품이 성공적으로 삭제되었습니다!",
-          severity: "success",
-        });
-
-        router.push("/admin/product");
-      })
-      .catch((error) => {
-        if (axios.isAxiosError(error)) {
-          const status = error?.response?.status;
-          const errors = error?.response?.data;
-          console.log("error.response.", error.response);
-
-          showMessage({
-            message: "상품 삭제에 실패했습니다.",
-            severity: "error",
-            status,
-            errors,
-          });
-        } else {
-          console.log(error);
-        }
-      });
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const productDto = {
+    const createProductDto = {
       name,
       description,
       unitPrice,
@@ -103,14 +56,14 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
     const formData = new FormData();
 
     formData.append(
-      "productDto",
-      new Blob([JSON.stringify(productDto)], { type: "application/json" })
+      "createProductDto",
+      new Blob([JSON.stringify(createProductDto)], { type: "application/json" })
     );
 
     formData.append("file", image);
 
     try {
-      await axios.put(`http://localhost:8080/api/v1/products/${id}`, formData, {
+      await axios.post("http://localhost:8080/api/v1/products", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -118,19 +71,19 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
 
       // 토스트 알람 보여주기
       showMessage({
-        message: "상품이 성공적으로 갱신되었습니다!",
+        message: "상품이 성공적으로 생성되었습니다!",
         severity: "success",
       });
 
-      router.push("/admin/product");
+      router.push("/admin/products");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error?.response?.status;
         const errors = error?.response?.data;
         console.log("error.response.", error.response);
-
+        // 실패 시 에러용 스낵바도 가능
         showMessage({
-          message: "상품 갱신에 실패했습니다.",
+          message: "상품 생성에 실패했습니다.",
           severity: "error",
           status,
           errors,
@@ -197,7 +150,7 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
           alignItems: "center",
         }}
       >
-        {product?.fileUrl && (
+        {image && (
           <Box
             sx={{
               display: "flex",
@@ -211,11 +164,10 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
             }}
           >
             <Image
-              src={(image && URL.createObjectURL(image)) ?? product?.fileUrl}
-              alt="Product Image"
+              src={URL.createObjectURL(image)}
               width={150}
               height={150}
-              unoptimized
+              alt={image.name}
             />
           </Box>
         )}
@@ -231,10 +183,8 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
         </Button>
       </Box>
 
-      {product?.fileName && (
-        <Typography variant="body1">
-          image name : {image ? image.name : product?.fileName}
-        </Typography>
+      {image && (
+        <Typography variant="body1">image name : {image.name}</Typography>
       )}
 
       <TextField
@@ -298,12 +248,8 @@ const UpdateProduct = ({ id, product }: UpdateProducProps) => {
       <Button type="submit" variant="contained">
         Submit
       </Button>
-
-      <Button variant="contained" color="error" onClick={handleConfirm}>
-        Delete
-      </Button>
     </Box>
   );
 };
 
-export default UpdateProduct;
+export default CreateProduct;

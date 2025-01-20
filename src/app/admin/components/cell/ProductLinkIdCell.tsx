@@ -7,7 +7,7 @@ interface ProductLinkIdCellProps {
 
 const ProductLinkIdCell = ({ id }: ProductLinkIdCellProps) => {
   return (
-    <Link href={`/admin/product/${id}`} legacyBehavior>
+    <Link href={`/admin/products/${id}`} legacyBehavior>
       <StyledLink>{id}</StyledLink>
     </Link>
   );

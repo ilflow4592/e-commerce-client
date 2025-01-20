@@ -61,17 +61,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </ListItem>
         <ListItem
           component={Link}
-          href="/admin/product"
+          href="/admin/products"
           sx={{
             color: "white",
             backgroundColor:
-              pathName === "/admin/product"
+              pathName === "/admin/products"
                 ? "rgba(255, 255, 255, 0.2)"
                 : "transparent",
           }}
           onClick={isMobile ? handleDrawerToggle : undefined}
         >
-          <ListItemText primary="Product" />
+          <ListItemText primary="Products" />
         </ListItem>
         <ListItem>
           <Header />

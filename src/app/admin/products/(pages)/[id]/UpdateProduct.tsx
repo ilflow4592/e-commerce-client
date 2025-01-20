@@ -1,5 +1,6 @@
 "use client";
 
+import { Product } from "app/admin/entity/product/Product";
 import {
   Box,
   Button,
@@ -12,33 +13,103 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import axios from "axios";
-import Image from "next/image";
+import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useConfirm } from "material-ui-confirm";
+import Image from "next/image";
 
-const CreateProduct = () => {
+interface UpdateProducProps {
+  id: number;
+  product: Product;
+}
+
+const UpdateProduct = ({ id, product }: UpdateProducProps) => {
+  const confirm = useConfirm();
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
 
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [unitPrice, setUnitPrice] = useState<string>("");
-  const [stockQuantity, setStockQuantity] = useState<string>("");
-  const [category, setCategory] = useState("");
-  const [size, setSize] = useState("");
+  const [name, setName] = useState(product.name);
+  const [description, setDescription] = useState(product.description);
+  const [unitPrice, setUnitPrice] = useState<number | string>(
+    product.unitPrice
+  );
+  const [stockQuantity, setStockQuantity] = useState<number | string>(
+    product.stockQuantity
+  );
+  const [category, setCategory] = useState(product.category);
+  const [size, setSize] = useState(product.size);
   const [image, setImage] = useState<File | null>(null);
-  const [shopDisplayable, setShopDisplayable] = useState(false);
+  const [shopDisplayable, setShopDisplayable] = useState(
+    product.shopDisplayable
+  );
+
+  const urlToFile = async (
+    fileUrl: string,
+    fileName: string
+  ): Promise<File> => {
+    const response = await fetch(fileUrl);
+    const blob = await response.blob();
+    const file = new File([blob], fileName, { type: blob.type });
+
+    setImage(file);
+
+    return file;
+  };
+
+  useEffect(() => {
+    urlToFile(product.fileUrl, product.fileName)
+      .then((file) => {
+        console.log("Converted File:", file);
+        setImage(file);
+      })
+      .catch((error) => {
+        console.error("Error converting URL to File:", error);
+      });
+  }, []);
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setShopDisplayable(event.target.checked);
   };
 
+  const handleConfirm = () => {
+    confirm({ title: "정말로 삭제하시겠습니까?" })
+      .then(async () => {
+        await axios.delete(`http://localhost:8080/api/v1/products/${id}`, {
+          headers: { "Content-Type": "application/json" },
+        });
+
+        // 토스트 알람 보여주기
+        showMessage({
+          message: "상품이 성공적으로 삭제되었습니다!",
+          severity: "success",
+        });
+
+        router.push("/admin/products");
+      })
+      .catch((error) => {
+        if (axios.isAxiosError(error)) {
+          const status = error?.response?.status;
+          const errors = error?.response?.data;
+          console.log("error.response.", error.response);
+
+          showMessage({
+            message: "상품 삭제에 실패했습니다.",
+            severity: "error",
+            status,
+            errors,
+          });
+        } else {
+          console.log(error);
+        }
+      });
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const createProductDto = {
+    const productDto = {
       name,
       description,
       unitPrice,
@@ -56,14 +127,14 @@ const CreateProduct = () => {
     const formData = new FormData();
 
     formData.append(
-      "createProductDto",
-      new Blob([JSON.stringify(createProductDto)], { type: "application/json" })
+      "productDto",
+      new Blob([JSON.stringify(productDto)], { type: "application/json" })
     );
 
     formData.append("file", image);
 
     try {
-      await axios.post("http://localhost:8080/api/v1/products", formData, {
+      await axios.put(`http://localhost:8080/api/v1/products/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -71,19 +142,19 @@ const CreateProduct = () => {
 
       // 토스트 알람 보여주기
       showMessage({
-        message: "상품이 성공적으로 생성되었습니다!",
+        message: "상품이 성공적으로 갱신되었습니다!",
         severity: "success",
       });
 
-      router.push("/admin/product");
+      router.push("/admin/products");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error?.response?.status;
         const errors = error?.response?.data;
         console.log("error.response.", error.response);
-        // 실패 시 에러용 스낵바도 가능
+
         showMessage({
-          message: "상품 생성에 실패했습니다.",
+          message: "상품 갱신에 실패했습니다.",
           severity: "error",
           status,
           errors,
@@ -150,7 +221,7 @@ const CreateProduct = () => {
           alignItems: "center",
         }}
       >
-        {image && (
+        {product?.fileUrl && (
           <Box
             sx={{
               display: "flex",
@@ -164,10 +235,11 @@ const CreateProduct = () => {
             }}
           >
             <Image
-              src={URL.createObjectURL(image)}
+              src={(image && URL.createObjectURL(image)) ?? product?.fileUrl}
+              alt="Product Image"
               width={150}
               height={150}
-              alt={image.name}
+              unoptimized
             />
           </Box>
         )}
@@ -183,8 +255,10 @@ const CreateProduct = () => {
         </Button>
       </Box>
 
-      {image && (
-        <Typography variant="body1">image name : {image.name}</Typography>
+      {product?.fileName && (
+        <Typography variant="body1">
+          image name : {image ? image.name : product?.fileName}
+        </Typography>
       )}
 
       <TextField
@@ -248,8 +322,12 @@ const CreateProduct = () => {
       <Button type="submit" variant="contained">
         Submit
       </Button>
+
+      <Button variant="contained" color="error" onClick={handleConfirm}>
+        Delete
+      </Button>
     </Box>
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;
