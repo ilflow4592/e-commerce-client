@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { styled } from "@mui/material/styles";
 import { Box, Button, Container, IconButton } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -38,6 +38,7 @@ const CartProductCount = styled("span")({
 });
 
 const Header = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const isShopPage = pathname.includes("/shop");
   const isAdminPage = pathname.includes("/admin");
@@ -64,6 +65,7 @@ const Header = () => {
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 color="inherit"
+                onClick={() => router.push("/shop/cart")}
               >
                 <ShoppingCartIcon />
               </IconButton>
