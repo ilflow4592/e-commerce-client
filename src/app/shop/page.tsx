@@ -8,7 +8,9 @@ const ShopPage = async () => {
   return (
     <Container maxWidth="xl" sx={{ marginTop: "30px" }}>
       <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h4">Products</Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Products
+        </Typography>
       </Box>
       <Box sx={{ marginTop: "30px" }}>
         <DisplayableProducts products={shopDisplayableProducts} />

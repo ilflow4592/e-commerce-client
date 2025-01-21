@@ -9,15 +9,12 @@ import {
   Typography,
   Button,
   IconButton,
+  Container,
 } from "@mui/material";
-import Image from "next/image";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-const imageLoader = ({ src }: { src: string }) => {
-  return src; // Presigned URL 그대로 반환
-};
+import ImageWithSkeleton from "../components/ImageWithSceleton";
 
 const groupCartItems = (cartProducts: Product[]) => {
   const groupedItems: {
@@ -68,10 +65,10 @@ const CartPage = () => {
   };
 
   return (
-    <Box sx={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
+    <Container maxWidth="md" sx={{ marginTop: "30px" }}>
       <Typography
         variant="h4"
-        sx={{ fontWeight: "bold", marginBottom: "20px" }}
+        sx={{ fontWeight: "bold", marginBottom: "20px", textAlign: "center" }}
       >
         Cart
       </Typography>
@@ -91,20 +88,12 @@ const CartPage = () => {
               marginBottom: "15px",
             }}
           >
-            {/* 상품 이미지 */}
-            <Box sx={{ width: "80px", height: "80px", marginRight: "15px" }}>
-              <Image
-                loader={imageLoader}
-                src={product.fileUrl}
-                alt={product.name}
-                width={100}
-                height={100}
-                style={{
-                  objectFit: "contain",
-                  borderRadius: "8px",
-                }}
-              />
-            </Box>
+            <ImageWithSkeleton
+              src={product.fileUrl}
+              alt={product.fileName}
+              width={100}
+              height={100}
+            />
 
             {/* 상품 정보 */}
             <CardContent sx={{ flex: 1 }}>
@@ -173,7 +162,7 @@ const CartPage = () => {
           장바구니 비우기
         </Button>
       )}
-    </Box>
+    </Container>
   );
 };
 
