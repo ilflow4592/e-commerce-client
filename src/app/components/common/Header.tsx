@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { styled } from "@mui/material/styles";
 import { Box, Button, Container, IconButton } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useState } from "react";
+import useLocalStorageWithEvent from "app/hooks/useLocalStorageWithEvent";
 
 const ShopLinkButton = styled(Button)({
   backgroundColor: "green",
@@ -41,8 +41,7 @@ const Header = () => {
   const pathname = usePathname();
   const isShopPage = pathname.includes("/shop");
   const isAdminPage = pathname.includes("/admin");
-
-  const [count, setCount] = useState(0);
+  const [cartProducts] = useLocalStorageWithEvent("cartProducts");
 
   return (
     <Container maxWidth="xl">
@@ -68,7 +67,7 @@ const Header = () => {
               >
                 <ShoppingCartIcon />
               </IconButton>
-              <CartProductCount>{count}</CartProductCount>
+              <CartProductCount>{cartProducts.length}</CartProductCount>
             </Box>
             <Link href="/admin">
               <AdminLinkButton variant="contained">To Admin</AdminLinkButton>

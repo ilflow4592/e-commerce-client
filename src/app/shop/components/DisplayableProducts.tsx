@@ -27,6 +27,13 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
     router.push(`/shop/products/${product.id}${query}`);
   };
 
+  const handleAddToCart = (product: Product) => {
+    const cart = JSON.parse(localStorage.getItem("cartProducts") || "[]");
+    cart.push(product);
+    localStorage.setItem("cartProducts", JSON.stringify(cart));
+    window.dispatchEvent(new Event("localStorageChanged")); // 다른 컴포넌트 업데이트 트리거
+  };
+
   return (
     <Box
       sx={{
@@ -127,6 +134,7 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
                   color: "white",
                 },
               }}
+              onClick={() => handleAddToCart(product)}
             >
               <AddShoppingCartIcon sx={{ fontSize: "1.2rem" }} />
             </Button>
