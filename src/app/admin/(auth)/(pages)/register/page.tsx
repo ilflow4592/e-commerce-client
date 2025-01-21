@@ -9,8 +9,10 @@ import {
   Container,
   Box,
 } from "@mui/material";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import Wrapper from "app/admin/components/style/Wrapper";
+import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   name: string;
@@ -21,6 +23,9 @@ interface FormData {
 }
 
 export default function Register() {
+  const { showMessage } = useGlobalSnackbar();
+  const router = useRouter();
+
   const [form, setForm] = useState<FormData>({
     name: "",
     email: "",
@@ -36,12 +41,29 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/register", form);
-      alert(response.data.message);
-    } catch (error) {
-      const err = error as AxiosError;
+      await axios.post("http://localhost:8080/api/v1/users/register", form);
 
-      console.error("Axios Error:", err.message);
+      showMessage({
+        message: "회원가입 성공!",
+        severity: "success",
+      });
+
+      router.push("/admin/login");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error?.response?.status;
+        const errors = error?.response?.data;
+        console.log("error.response.", error.response);
+
+        showMessage({
+          message: "상품 생성에 실패했습니다.",
+          severity: "error",
+          status,
+          errors,
+        });
+      } else {
+        console.log(error);
+      }
     }
   };
 
