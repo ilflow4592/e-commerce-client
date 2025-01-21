@@ -50,6 +50,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           href="/admin"
           sx={{
             color: "white",
+            textAlign: "center",
             backgroundColor:
               pathName === "/admin"
                 ? "rgba(255, 255, 255, 0.2)"
@@ -64,6 +65,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           href="/admin/products"
           sx={{
             color: "white",
+            textAlign: "center",
             backgroundColor:
               pathName === "/admin/products"
                 ? "rgba(255, 255, 255, 0.2)"

@@ -6,6 +6,7 @@ import { styled } from "@mui/material/styles";
 import { Box, Button, Container, IconButton } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import useLocalStorageWithEvent from "app/hooks/useLocalStorageWithEvent";
+import { useState } from "react";
 
 const ShopLinkButton = styled(Button)({
   backgroundColor: "green",
@@ -43,6 +44,7 @@ const Header = () => {
   const isShopPage = pathname.includes("/shop");
   const isAdminPage = pathname.includes("/admin");
   const [cartProducts] = useLocalStorageWithEvent("cartProducts");
+  const [isLogin] = useState(false);
 
   return (
     <Container maxWidth="xl">
@@ -74,15 +76,38 @@ const Header = () => {
             <Link href="/admin">
               <AdminLinkButton variant="contained">To Admin</AdminLinkButton>
             </Link>
+            {!isLogin && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => router.push("/shop/login")}
+              >
+                Login
+              </Button>
+            )}
           </Box>
         )}
-
-        {isAdminPage && (
-          <Link href="/shop">
-            <ShopLinkButton variant="contained">To Shop</ShopLinkButton>
-          </Link>
-        )}
       </Box>
+
+      {isAdminPage && (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <Link href="/shop">
+            <ShopLinkButton variant="contained" fullWidth>
+              To Shop
+            </ShopLinkButton>
+          </Link>
+          {!isLogin && (
+            <Button
+              variant="contained"
+              fullWidth
+              color="secondary"
+              onClick={() => router.push("/admin/login")}
+            >
+              Login
+            </Button>
+          )}
+        </Box>
+      )}
     </Container>
   );
 };
