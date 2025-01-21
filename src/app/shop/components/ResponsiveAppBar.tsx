@@ -3,17 +3,19 @@ import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-// import Typography from "@mui/material/Typography";
+import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-// import Button from "@mui/material/Button";
-// import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
 import Header from "app/components/common/Header";
+import { useRouter } from "next/navigation";
 
-// const pages = ["Products", "Pricing", "Blog"];
+const pages = [{ value: "Home", page: "/shop" }];
 
 function ResponsiveAppBar() {
+  const router = useRouter();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -24,6 +26,11 @@ function ResponsiveAppBar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleRouter = (page: string) => {
+    handleCloseNavMenu();
+    router.push(page);
   };
 
   return (
@@ -57,23 +64,28 @@ function ResponsiveAppBar() {
               onClose={handleCloseNavMenu}
               sx={{ display: { xs: "block", md: "none" } }}
             >
-              {/* {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: "center" }}>{page}</Typography>
+              {pages.map((page) => (
+                <MenuItem
+                  key={page.value}
+                  onClick={() => handleRouter(page.page)}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    {page.value}
+                  </Typography>
                 </MenuItem>
-              ))} */}
+              ))}
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {/* {pages.map((page) => (
+            {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.value}
+                onClick={() => handleRouter(page.page)}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {page.value}
               </Button>
-            ))} */}
+            ))}
           </Box>
           <Header />
         </Toolbar>

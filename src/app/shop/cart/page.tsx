@@ -73,12 +73,12 @@ const CartPage = () => {
         variant="h4"
         sx={{ fontWeight: "bold", marginBottom: "20px" }}
       >
-        장바구니
+        Cart
       </Typography>
 
       {groupedCart.length === 0 ? (
         <Typography variant="body1" sx={{ textAlign: "center", color: "#666" }}>
-          장바구니가 비어 있습니다.
+          Cart is empty.
         </Typography>
       ) : (
         groupedCart.map(({ product, quantity }) => (
