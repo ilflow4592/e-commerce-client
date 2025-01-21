@@ -8,7 +8,9 @@ type SnackbarMessage = {
   message: string;
   severity?: AlertColor; // 'success' | 'error' | 'warning' | 'info'
   status?: HttpStatusCode;
-  errors?: { field: string; message: string }[];
+  errors?:
+    | { error: string; message: string }[]
+    | { error: string; message: string };
 };
 
 interface GlobalSnackbarContextProps {
@@ -58,13 +60,21 @@ export default function GlobalSnackbarProvider({
           >
             <p>{snackbarData.message}</p>
             {snackbarData.status && <p> status : {snackbarData.status}</p>}
-            {snackbarData.errors?.map((error, index) => (
-              <div key={index}>
-                <p>
-                  error{index + 1} - {error.field} : {error.message}
-                </p>
-              </div>
-            ))}
+            {Array.isArray(snackbarData.errors)
+              ? snackbarData.errors?.map((error, index) => (
+                  <div key={index}>
+                    <p>
+                      error{index + 1} - {error.error} : {error.message}
+                    </p>
+                  </div>
+                ))
+              : snackbarData.errors && (
+                  <div>
+                    <p>
+                      {snackbarData.errors.error} :{snackbarData.errors.message}
+                    </p>
+                  </div>
+                )}
           </Alert>
         </Snackbar>
       )}
