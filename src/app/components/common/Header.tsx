@@ -6,7 +6,7 @@ import { styled } from "@mui/material/styles";
 import { Box, Button, Container, IconButton } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import useLocalStorageWithEvent from "app/hooks/useLocalStorageWithEvent";
-import { useState } from "react";
+import { useAuth } from "app/admin/(auth)/provider/AuthProvider";
 
 const ShopLinkButton = styled(Button)({
   backgroundColor: "green",
@@ -44,7 +44,7 @@ const Header = () => {
   const isShopPage = pathname.includes("/shop");
   const isAdminPage = pathname.includes("/admin");
   const [cartProducts] = useLocalStorageWithEvent("cartProducts");
-  const [isLogin] = useState(false);
+  const { isLogin, handleLogout } = useAuth();
 
   return (
     <Container maxWidth="xl">
@@ -76,13 +76,22 @@ const Header = () => {
             <Link href="/admin">
               <AdminLinkButton variant="contained">To Admin</AdminLinkButton>
             </Link>
-            {!isLogin && (
+            {!isLogin ? (
               <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => router.push("/shop/login")}
               >
                 Login
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                fullWidth
+                color="warning"
+                onClick={handleLogout}
+              >
+                Logout
               </Button>
             )}
           </Box>
@@ -96,7 +105,7 @@ const Header = () => {
               To Shop
             </ShopLinkButton>
           </Link>
-          {!isLogin && (
+          {!isLogin ? (
             <Button
               variant="contained"
               fullWidth
@@ -104,6 +113,15 @@ const Header = () => {
               onClick={() => router.push("/admin/login")}
             >
               Login
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              fullWidth
+              color="warning"
+              onClick={handleLogout}
+            >
+              Logout
             </Button>
           )}
         </Box>
