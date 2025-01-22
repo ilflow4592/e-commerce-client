@@ -20,6 +20,7 @@ import { usePathname } from "next/navigation";
 import GlobalSnackbarProvider from "./components/GlobalSnackbarProvider";
 import { ConfirmProvider } from "material-ui-confirm";
 import Header from "app/components/common/Header";
+import { AuthProvider } from "./(auth)/provider/AuthProvider";
 
 const drawerWidth = 240;
 
@@ -96,48 +97,50 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <Box>
-      <CssBaseline />
-      {isMobile && (
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Admin Panel
-          </Typography>
-        </Toolbar>
-      )}
+      <AuthProvider>
+        <CssBaseline />
+        {isMobile && (
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Admin Panel
+            </Typography>
+          </Toolbar>
+        )}
 
-      {/* 왼쪽 Drawer (메뉴) */}
-      <Drawer
-        variant={isMobile ? "temporary" : "permanent"}
-        open={isMobile ? mobileOpen : true}
-        onClose={isMobile ? handleDrawerToggle : undefined}
-        sx={{ flexShrink: 0, ...drawerSx }}
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        {drawerItems}
-      </Drawer>
+        {/* 왼쪽 Drawer (메뉴) */}
+        <Drawer
+          variant={isMobile ? "temporary" : "permanent"}
+          open={isMobile ? mobileOpen : true}
+          onClose={isMobile ? handleDrawerToggle : undefined}
+          sx={{ flexShrink: 0, ...drawerSx }}
+          ModalProps={{
+            keepMounted: true,
+          }}
+        >
+          {drawerItems}
+        </Drawer>
 
-      {/* 메인 컨텐츠 영역 */}
-      <Box
-        component="main"
-        sx={{
-          ml: isMobile ? 0 : `${drawerWidth}px`,
-          backgroundColor: "#fff",
-        }}
-      >
-        <ConfirmProvider>
-          <GlobalSnackbarProvider>{children}</GlobalSnackbarProvider>
-        </ConfirmProvider>
-      </Box>
+        {/* 메인 컨텐츠 영역 */}
+        <Box
+          component="main"
+          sx={{
+            ml: isMobile ? 0 : `${drawerWidth}px`,
+            backgroundColor: "#fff",
+          }}
+        >
+          <ConfirmProvider>
+            <GlobalSnackbarProvider>{children}</GlobalSnackbarProvider>
+          </ConfirmProvider>
+        </Box>
+      </AuthProvider>
     </Box>
   );
 }

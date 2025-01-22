@@ -6,6 +6,7 @@ import axios from "axios";
 import Wrapper from "app/admin/components/style/Wrapper";
 import { useRouter } from "next/navigation";
 import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
+import { useAuth } from "../../provider/AuthProvider";
 
 interface LoginForm {
   email: string;
@@ -16,6 +17,7 @@ export default function Login() {
   const router = useRouter();
   const { showMessage } = useGlobalSnackbar();
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
+  const { setIsLogin } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,22 +36,26 @@ export default function Login() {
         severity: "success",
       });
 
-      router.push("/admin/products");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error?.response?.status;
-        const errors = error?.response?.data;
-        console.log("error.response.", error.response);
+      setIsLogin(true);
 
-        showMessage({
-          message: "로그인에 실패했습니다.",
-          severity: "error",
-          status,
-          errors,
-        });
+      const userCheck = await axios.get(
+        "http://localhost:8080/api/v1/users/me",
+        { withCredentials: true }
+      );
+      if (userCheck.data) {
+        router.push("/admin/products");
       } else {
-        console.log(error);
+        showMessage({
+          message: "로그인 상태를 확인할 수 없습니다.",
+          severity: "error",
+        });
       }
+    } catch (error) {
+      showMessage({
+        message: "로그인에 실패했습니다.",
+        severity: "error",
+      });
+      console.log(error);
     }
   };
 
