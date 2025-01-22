@@ -17,10 +17,10 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import GlobalSnackbarProvider from "./components/GlobalSnackbarProvider";
 import { ConfirmProvider } from "material-ui-confirm";
 import Header from "app/components/common/Header";
 import { AuthProvider } from "./(auth)/provider/AuthProvider";
+import GlobalSnackbarProvider from "../GlobalSnackbarProvider";
 
 const drawerWidth = 240;
 

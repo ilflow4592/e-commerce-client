@@ -3,6 +3,8 @@
 import { ReactNode } from "react";
 import { Box } from "@mui/material";
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
+import { AuthProvider } from "app/admin/(auth)/provider/AuthProvider";
+import GlobalSnackbarProvider from "app/GlobalSnackbarProvider";
 
 interface ShopLayoutProps {
   children: ReactNode;
@@ -11,8 +13,12 @@ interface ShopLayoutProps {
 export default function ShopLayout({ children }: ShopLayoutProps) {
   return (
     <Box>
-      <ResponsiveAppBar />
-      {children}
+      <AuthProvider>
+        <GlobalSnackbarProvider>
+          <ResponsiveAppBar />
+          {children}
+        </GlobalSnackbarProvider>
+      </AuthProvider>
     </Box>
   );
 }

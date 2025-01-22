@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
+import { useGlobalSnackbar } from "app/GlobalSnackbarProvider";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

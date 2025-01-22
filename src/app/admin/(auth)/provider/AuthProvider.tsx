@@ -2,7 +2,14 @@
 
 import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from "react";
 
 export interface User {
   id: number;
@@ -26,8 +33,6 @@ export const AuthContext = createContext<{
   handleLogout: () => {},
 });
 
-import { ReactNode } from "react";
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -45,7 +50,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLogin(false);
       setUser(null);
 
-      router.push("/admin/login");
+      if (pathname === "/shop") {
+        router.push("/shop/login");
+      } else {
+        router.push("/admin/login");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -62,12 +71,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           { withCredentials: true }
         );
         if (response.data) {
-          console.log(response);
           setUser(response.data);
           setIsLogin(true);
         } else {
-          setIsLogin(false);
-          router.push("/admin/login");
+          if (pathname !== "/shop") {
+            setIsLogin(false);
+            router.push("/admin/login");
+          }
         }
       } catch (error) {
         setIsLogin(false);
@@ -77,18 +87,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     };
     fetchData();
-  }, [router]);
+  }, [pathname, router]);
 
-  // 로그인 상태 확인이 끝날 때까지 리디렉션을 하지 않음
   useEffect(() => {
     if (isLogin === null) return;
+    console.log(pathname);
+
+    if (pathname === "/shop" || pathname === "/shop/login") return;
 
     if (!isLogin && pathname !== "/admin/login") {
       router.push("/admin/login");
-    } else if (isLogin && pathname === "/admin/login") {
+    }
+    if (isLogin && pathname === "/admin/login") {
       router.push("/admin");
     }
   }, [isLogin, pathname, router]);
+
   return (
     <AuthContext.Provider
       value={{ user, isLogin, setUser, setIsLogin, handleLogout }}

@@ -14,11 +14,11 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
-import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useConfirm } from "material-ui-confirm";
 import Image from "next/image";
+import { useGlobalSnackbar } from "app/GlobalSnackbarProvider";
 
 interface UpdateProducProps {
   id: number;

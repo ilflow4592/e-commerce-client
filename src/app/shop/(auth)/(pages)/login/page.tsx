@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import Wrapper from "app/admin/components/style/Wrapper";
 import { useRouter } from "next/navigation";
+import { useAuth } from "app/admin/(auth)/provider/AuthProvider";
+import { useGlobalSnackbar } from "app/GlobalSnackbarProvider";
 
 interface LoginForm {
   email: string;
@@ -13,7 +15,9 @@ interface LoginForm {
 
 export default function Login() {
   const router = useRouter();
+  const { showMessage } = useGlobalSnackbar();
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
+  const { setIsLogin } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,12 +26,36 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/login", form);
-      alert(response.data.message);
-    } catch (error) {
-      const err = error as AxiosError;
+      await axios.post("http://localhost:8080/api/v1/users/login", form, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
 
-      console.error("Axios Error:", err.message);
+      showMessage({
+        message: "로그인 성공!",
+        severity: "success",
+      });
+
+      setIsLogin(true);
+
+      const userCheck = await axios.get(
+        "http://localhost:8080/api/v1/users/me",
+        { withCredentials: true }
+      );
+      if (userCheck.data) {
+        router.push("/shop");
+      } else {
+        showMessage({
+          message: "로그인 상태를 확인할 수 없습니다.",
+          severity: "error",
+        });
+      }
+    } catch (error) {
+      showMessage({
+        message: "로그인에 실패했습니다.",
+        severity: "error",
+      });
+      console.log(error);
     }
   };
 
@@ -80,7 +108,7 @@ export default function Login() {
                 variant="contained"
                 color="secondary"
                 fullWidth
-                onClick={() => router.push("/shop/register")}
+                onClick={() => router.push("/admin/register")}
               >
                 회원가입
               </Button>

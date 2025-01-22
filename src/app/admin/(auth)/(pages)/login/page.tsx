@@ -5,8 +5,8 @@ import { TextField, Button, Typography, Container, Box } from "@mui/material";
 import axios from "axios";
 import Wrapper from "app/admin/components/style/Wrapper";
 import { useRouter } from "next/navigation";
-import { useGlobalSnackbar } from "app/admin/components/GlobalSnackbarProvider";
 import { useAuth } from "../../provider/AuthProvider";
+import { useGlobalSnackbar } from "app/GlobalSnackbarProvider";
 
 interface LoginForm {
   email: string;
