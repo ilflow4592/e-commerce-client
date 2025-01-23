@@ -2,7 +2,9 @@ import { Box, Container, Typography } from "@mui/material";
 import DisplayableProducts from "./components/DisplayableProducts";
 
 const ShopPage = async () => {
-  const data = await fetch(`http://localhost:8080/api/v1/products/shop`);
+  const data = await fetch(
+    `http://localhost:8080/api/v1/products/shop?page=1&size=10`
+  );
   const shopDisplayableProducts = await data.json();
 
   return (
@@ -13,7 +15,7 @@ const ShopPage = async () => {
         </Typography>
       </Box>
       <Box sx={{ marginTop: "30px" }}>
-        <DisplayableProducts products={shopDisplayableProducts} />
+        <DisplayableProducts products={shopDisplayableProducts.data} />
       </Box>
     </Container>
   );
