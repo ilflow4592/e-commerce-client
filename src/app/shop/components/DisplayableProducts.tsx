@@ -1,6 +1,13 @@
 "use client";
 
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Typography,
+} from "@mui/material";
 import { Product } from "app/admin/entity/product/Product";
 import { formatNumber } from "../utils/formatNumber";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
@@ -31,131 +38,136 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexWrap: "wrap",
-        gap: "20px",
-        padding: "20px",
-      }}
-    >
-      {products.map((product: Product) => (
-        <Card
-          key={product.id}
-          sx={{
-            width: 220,
-            borderRadius: "12px",
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Box
-            onClick={() => handlePush(product)}
+    <Container>
+      <Typography variant="h4" sx={{ fontWeight: "bold", textAlign: "center" }}>
+        Products
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          gap: "20px",
+          padding: "20px",
+        }}
+      >
+        {products?.map((product: Product) => (
+          <Card
+            key={product.id}
             sx={{
-              ":hover": {
-                cursor: "pointer",
-              },
+              width: 220,
+              borderRadius: "12px",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
             }}
           >
             <Box
+              onClick={() => handlePush(product)}
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                height: "140px",
-                borderTopLeftRadius: "12px",
-                borderTopRightRadius: "12px",
+                ":hover": {
+                  cursor: "pointer",
+                },
               }}
             >
-              <ImageWithSkeleton
-                src={product.fileUrl}
-                alt={product.fileName}
-                width={100}
-                height={100}
-              />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: "140px",
+                  borderTopLeftRadius: "12px",
+                  borderTopRightRadius: "12px",
+                }}
+              >
+                <ImageWithSkeleton
+                  src={product.fileUrl}
+                  alt={product.fileName}
+                  width={100}
+                  height={100}
+                />
+              </Box>
+
+              <CardContent sx={{ textAlign: "center", padding: "12px" }}>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: "bold",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {product.name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#d32f2f",
+                    fontSize: "1.1rem",
+                    marginTop: "4px",
+                  }}
+                >
+                  {formatNumber(product.unitPrice)}원
+                </Typography>
+              </CardContent>
             </Box>
 
-            <CardContent sx={{ textAlign: "center", padding: "12px" }}>
-              <Typography
-                variant="body1"
-                sx={{
-                  fontWeight: "bold",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {product.name}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: "bold",
-                  color: "#d32f2f",
-                  fontSize: "1.1rem",
-                  marginTop: "4px",
-                }}
-              >
-                {formatNumber(product.unitPrice)}원
-              </Typography>
-            </CardContent>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "10px",
-              borderTop: "1px solid #e0e0e0",
-            }}
-          >
-            <Button
-              variant="outlined"
+            <Box
               sx={{
-                flex: 1,
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                minWidth: "40px",
-                padding: "6px",
-                borderRadius: "8px",
-                color: "#1976d2",
-                borderColor: "#1976d2",
-                "&:hover": {
-                  backgroundColor: "#1976d2",
-                  color: "white",
-                },
+                justifyContent: "space-between",
+                padding: "10px",
+                borderTop: "1px solid #e0e0e0",
               }}
-              onClick={() => handleAddToCart(product)}
             >
-              <AddShoppingCartIcon sx={{ fontSize: "1.2rem" }} />
-            </Button>
+              <Button
+                variant="outlined"
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minWidth: "40px",
+                  padding: "6px",
+                  borderRadius: "8px",
+                  color: "#1976d2",
+                  borderColor: "#1976d2",
+                  "&:hover": {
+                    backgroundColor: "#1976d2",
+                    color: "white",
+                  },
+                }}
+                onClick={() => handleAddToCart(product)}
+              >
+                <AddShoppingCartIcon sx={{ fontSize: "1.2rem" }} />
+              </Button>
 
-            <Button
-              variant="contained"
-              sx={{
-                flex: 2,
-                marginLeft: "8px",
-                padding: "6px",
-                borderRadius: "8px",
-                backgroundColor: "#ff9800",
-                border: "2px solid #ff9800",
-                color: "white",
-                fontWeight: "bold",
-                "&:hover": {
-                  backgroundColor: "#e68900",
-                  border: "2px solid #e68900",
-                },
-              }}
-            >
-              구매하기
-            </Button>
-          </Box>
-        </Card>
-      ))}
-    </Box>
+              <Button
+                variant="contained"
+                sx={{
+                  flex: 2,
+                  marginLeft: "8px",
+                  padding: "6px",
+                  borderRadius: "8px",
+                  backgroundColor: "#ff9800",
+                  border: "2px solid #ff9800",
+                  color: "white",
+                  fontWeight: "bold",
+                  "&:hover": {
+                    backgroundColor: "#e68900",
+                    border: "2px solid #e68900",
+                  },
+                }}
+              >
+                구매하기
+              </Button>
+            </Box>
+          </Card>
+        ))}
+      </Box>
+    </Container>
   );
 };
 
