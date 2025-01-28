@@ -14,6 +14,9 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useRouter } from "next/navigation";
 import { encodeToBase64Query } from "../utils/base64";
 import ImageWithSkeleton from "./ImageWithSceleton";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import { useState } from "react";
 
 interface DisplayableProductsProps {
   products: Product[];
@@ -21,20 +24,36 @@ interface DisplayableProductsProps {
 
 const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
   const router = useRouter();
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
 
   const handlePush = (product: Product) => {
     const data = { ...product };
-
     const query = encodeToBase64Query(data);
-
     router.push(`/shop/products/${product.id}${query}`);
   };
 
   const handleAddToCart = (product: Product) => {
     const cart = JSON.parse(localStorage.getItem("cartProducts") || "[]");
-    cart.push(product);
+    const quantity = quantities[product.id] || 1;
+    for (let i = 0; i < quantity; i++) {
+      cart.push(product);
+    }
     localStorage.setItem("cartProducts", JSON.stringify(cart));
-    window.dispatchEvent(new Event("localStorageChanged")); // 다른 컴포넌트 업데이트 트리거
+    window.dispatchEvent(new Event("localStorageChanged"));
+  };
+
+  const handleIncrease = (productId: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: (prev[productId] || 1) + 1,
+    }));
+  };
+
+  const handleDecrease = (productId: number) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [productId]: prev[productId] > 1 ? prev[productId] - 1 : 1,
+    }));
   };
 
   return (
@@ -56,7 +75,7 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
           <Card
             key={product.id}
             sx={{
-              width: 220,
+              width: 350,
               borderRadius: "12px",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
             }}
@@ -64,9 +83,7 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
             <Box
               onClick={() => handlePush(product)}
               sx={{
-                ":hover": {
-                  cursor: "pointer",
-                },
+                ":hover": { cursor: "pointer" },
               }}
             >
               <Box
@@ -134,15 +151,28 @@ const DisplayableProducts = ({ products }: DisplayableProductsProps) => {
                   borderRadius: "8px",
                   color: "#1976d2",
                   borderColor: "#1976d2",
-                  "&:hover": {
-                    backgroundColor: "#1976d2",
-                    color: "white",
-                  },
+                  "&:hover": { backgroundColor: "#1976d2", color: "white" },
                 }}
                 onClick={() => handleAddToCart(product)}
               >
                 <AddShoppingCartIcon sx={{ fontSize: "1.2rem" }} />
               </Button>
+
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Button onClick={() => handleDecrease(product.id)}>
+                  <RemoveIcon sx={{ color: "red" }} />
+                </Button>
+                <Button onClick={() => handleIncrease(product.id)}>
+                  <AddIcon sx={{ color: "green" }} />
+                </Button>
+                <Box
+                  sx={{ border: "3px solid powderblue", borderRadius: "5px" }}
+                >
+                  <Typography sx={{ fontWeight: "bold", padding: "5px 10px" }}>
+                    {quantities[product.id] || 1}
+                  </Typography>
+                </Box>
+              </Box>
 
               <Button
                 variant="contained"
