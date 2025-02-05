@@ -31,4 +31,5 @@ export const getAllProductResponseColumns: GridColDef[] = [
       return <Checkbox checked={params.value} />;
     },
   },
+  { field: "createdAt", headerName: "Created At" },
 ];

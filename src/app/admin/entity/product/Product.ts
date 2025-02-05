@@ -9,4 +9,5 @@ export interface Product {
   shopDisplayable?: boolean;
   fileUrl: string;
   fileName: string;
+  createdAt: Date;
 }
