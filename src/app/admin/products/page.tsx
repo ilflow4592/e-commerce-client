@@ -24,8 +24,8 @@ const ProductPage = () => {
 
   const fetchData = async (page: number, pageSize: number) => {
     try {
-      const field = sortModel[0]?.field ?? "id";
-      const sort = sortModel[0]?.sort ?? "asc";
+      const field = sortModel[0]?.field ?? "createdAt";
+      const sort = sortModel[0]?.sort ?? "desc";
 
       const response = await axios.get(
         `http://localhost:8080/api/v1/products?page=${page + 1}&size=${pageSize}&sort=${field},${sort}`,
